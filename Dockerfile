@@ -109,7 +109,7 @@ ENV NODE_VERSION 12
 
 # update the repository sources list
 # and install dependencies
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_17.x | bash -
 RUN apt-get install -y nodejs npm
 RUN npm install yarn -g
 
