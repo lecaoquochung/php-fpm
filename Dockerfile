@@ -1,4 +1,5 @@
-FROM php:7.4-fpm
+# https://github.com/docker-library/php
+FROM php:8.1.1-fpm
 
 LABEL lehungio <me@lehungio.com>
 
@@ -88,15 +89,17 @@ ENV NODE_VERSION 12
 
 ## nvm
 # https://gist.github.com/remarkablemark/aacf14c29b3f01d6900d13137b21db3a#file-dockerfile
-# RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
-# RUN source $NVM_DIR/nvm.sh \
-#     && nvm install $NODE_VERSION \
-#     && nvm alias default $NODE_VERSION \
-#     && nvm use default \
-#     && npm install yarn -g 
+RUN apt-get update
+RUN apt-get install -y build-essential libssl-dev
+RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
+RUN source $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default \
+    && npm install yarn -g 
 # # add node and npm to path so the commands are available
-# ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-# ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 # TODO This loads nvm
 # this command can not load properly when build, but  can run directly in ssh
@@ -105,9 +108,11 @@ ENV NODE_VERSION 12
 
 # update the repository sources list
 # and install dependencies
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN apt-get install -y nodejs npm
-RUN npm install yarn -g
+# https://github.com/nodesource/distributions/blob/master/deb/src/_setup.sh#L114
+# RUN curl -sL https://deb.nodesource.com/setup_17.x | bash -
+# RUN apt-get install -y nodejs npm
+# RUN npm install yarn -g
+
 
 # mysql dependencies
 RUN apt-get update && apt-get install -y \
@@ -122,16 +127,18 @@ RUN php --ini
 RUN php --version
 
 RUN uname -a
+RUN whoami
+RUN pwd
 
-# RUN source ~/.bashrc
+RUN source ~/.bashrc
 # 02. NVM / Node / Yarn
 # RUN nvm --version
 # RUN command -v nvm
 # RUN nvm ls-remote
 # RUN nvm list
-RUN node -v
-RUN npm -v
-RUN yarn -v
+# RUN node -v
+# RUN npm -v
+# RUN yarn -v
 
 # 03. MYSQL CLIENT
 RUN mysql --version
