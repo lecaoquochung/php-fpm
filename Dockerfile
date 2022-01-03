@@ -3,6 +3,21 @@ FROM php:8.1.1-fpm
 
 LABEL lehungio <me@lehungio.com>
 
+SHELL ["/bin/bash", "-l", "-euxo", "pipefail", "-c"]
+
+RUN apt-get update; \
+    apt-get full-upgrade -y; \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+    ; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*
+
+# https://stackoverflow.com/a/25908200
+RUN apt-get update && \
+      apt-get -y install sudo
+
 # Replace shell with bash so we can source files
 # https://stackoverflow.com/questions/25899912/how-to-install-nvm-in-docker
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -70,36 +85,24 @@ RUN pecl install imagick
 
 # Node dependencies
 # https://github.com/nodejs/Release
-ENV NVM_DIR /root/.nvm
-ENV NODE_VERSION 12
-# Instal nvm, node, yarn
-# https://github.com/nvm-sh/nvm
-# RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash \
-#     && export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")" \
-#     && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
-#     && nvm install $NODE_VERSION \
-#     && nvm alias default $NODE_VERSION \
-#     && nvm use default \
-#     && npm install yarn -g
+# Fix node -v command not found
+# https://gist.github.com/remarkablemark/aacf14c29b3f01d6900d13137b21db3a
+# https://gist.github.com/remarkablemark/aacf14c29b3f01d6900d13137b21db3a#gistcomment-3067813
+ENV NVM_DIR /usr/local/nvm
 
-# ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-# ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
+RUN mkdir -p "$NVM_DIR"; \
+    curl -o- \
+        "https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh" | \
+        bash \
+    ; \
+    source $NVM_DIR/nvm.sh; \
+    nvm install --lts --latest-npm
 
-# install node and npm
-
-## nvm
-# https://gist.github.com/remarkablemark/aacf14c29b3f01d6900d13137b21db3a#file-dockerfile
-RUN apt-get update
-RUN apt-get install -y build-essential libssl-dev
-RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
-RUN source $NVM_DIR/nvm.sh \
-    && nvm install $NODE_VERSION \
-    && nvm alias default $NODE_VERSION \
-    && nvm use default \
-    && npm install yarn -g 
-# # add node and npm to path so the commands are available
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+RUN command -v nvm; \
+    command -v node; \
+    node --version; \
+    command -v npm; \
+    npm --version
 
 # TODO This loads nvm
 # this command can not load properly when build, but  can run directly in ssh
@@ -111,7 +114,7 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # https://github.com/nodesource/distributions/blob/master/deb/src/_setup.sh#L114
 # RUN curl -sL https://deb.nodesource.com/setup_17.x | bash -
 # RUN apt-get install -y nodejs npm
-# RUN npm install yarn -g
+RUN npm install yarn -g
 
 
 # mysql dependencies
@@ -130,15 +133,16 @@ RUN uname -a
 RUN whoami
 RUN pwd
 
+
 RUN source ~/.bashrc
 # 02. NVM / Node / Yarn
-# RUN nvm --version
+RUN nvm --version
 # RUN command -v nvm
 # RUN nvm ls-remote
 # RUN nvm list
-# RUN node -v
-# RUN npm -v
-# RUN yarn -v
+RUN node -v
+RUN npm -v
+RUN yarn -v
 
 # 03. MYSQL CLIENT
 RUN mysql --version
