@@ -133,8 +133,8 @@ RUN uname -a
 RUN whoami
 RUN pwd
 
-
-RUN source ~/.bashrc
+# https://stackoverflow.com/questions/55206227/why-bashrc-is-not-executed-when-run-docker-container
+CMD source ~/.bashrc
 # 02. NVM / Node / Yarn
 RUN nvm --version
 # RUN command -v nvm
