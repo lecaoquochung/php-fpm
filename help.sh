@@ -62,8 +62,13 @@ status() {
 
 # Docker compose logs
 logs() {
+	printf "param: $2"
+
 	case $2 in
-		liho|*)  docker-compose logs ;;
+		php-build)
+			docker-compose logs php-build
+			;;
+		all|*)  docker-compose logs ;;
 	esac
 }
 
@@ -89,7 +94,7 @@ case $1 in
 	stop|down) stop ;;
 	restart|reboot) restart ;;
 	status|ps) status ;;
-	logs) logs ${2:-all} ;;
+	logs) logs ${1} ${2:-all} ;;
 	ssh) dockerssh ${2:-php} ;;
 	*) helps ;;
 esac

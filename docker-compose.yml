@@ -3,6 +3,19 @@ version: '3.7'
 
 services:
   php:
+    restart: always
+    container_name: php-me
+    hostname: php-me
+    image: lehungio/php-fpm:v1.0.4
+    working_dir: /code
+    volumes:
+      - ./:/code
+      # - $PWD/docker/php/conf/php.ini:/usr/local/etc/php/php.ini
+      # - $PWD/docker/php/7/conf/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    depends_on:
+      - php-build
+  
+  php-build:
     container_name: php-build
     build:
       context: .
@@ -19,3 +32,6 @@ services:
     volumes:
       - ./:/code
       - ./site.conf:/etc/nginx/conf.d/site.conf
+    depends_on:
+      - php
+      - php-build
