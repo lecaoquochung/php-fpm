@@ -3,6 +3,7 @@ FROM php:8.1.1-fpm
 
 LABEL lehungio <me@lehungio.com>
 
+# https://gist.github.com/lehungio/acc2bfc681349f678965a5d677168e88#file-dockerfile-L5
 SHELL ["/bin/bash", "-l", "-euxo", "pipefail", "-c"]
 
 RUN apt-get update; \
@@ -98,11 +99,11 @@ RUN mkdir -p "$NVM_DIR"; \
     source $NVM_DIR/nvm.sh; \
     nvm install --lts --latest-npm
 
-RUN command -v nvm; \
-    command -v node; \
-    node --version; \
-    command -v npm; \
-    npm --version
+# RUN command -v nvm; \
+#     command -v node; \
+#     node --version; \
+#     command -v npm; \
+#     npm --version
 
 # TODO This loads nvm
 # this command can not load properly when build, but  can run directly in ssh
@@ -134,7 +135,7 @@ RUN whoami
 RUN pwd
 
 # https://stackoverflow.com/questions/55206227/why-bashrc-is-not-executed-when-run-docker-container
-CMD source ~/.bashrc
+# CMD source ~/.bashrc
 # 02. NVM / Node / Yarn
 RUN nvm --version
 # RUN command -v nvm
