@@ -37,7 +37,14 @@ usage() {
 
 # Docker compose build
 build() {
-	docker-compose build
+	printf "param: 1:$1 2:$2\n"
+
+	case $2 in
+		plain) 
+			docker-compose build --progress=plain 
+			;;
+		*)  docker-compose build ;;
+	esac
 }
 
 # Docker compose up
@@ -65,16 +72,19 @@ logs() {
 	printf "param: $2"
 
 	case $2 in
-		php-build)
+		php-build|build)
 			docker-compose logs php-build
-			;;
+		;;
 		all|*)  docker-compose logs ;;
 	esac
 }
 
 # ssh cli
 dockerssh() {
-	case $1 in
+	case $2 in
+		php-build|build)
+			docker-compose exec $2 /bin/bash
+		;;
 		*) docker-compose exec php /bin/bash ;;
 	esac
 }
@@ -82,6 +92,9 @@ dockerssh() {
 # open test page
 run_open() {
 	case $2 in
+		test)
+			open http://$LOCALHOST:38086/test/index.html
+		;;
 		*)  open http://localhost:38086 ;;
 	esac
 }
@@ -89,12 +102,12 @@ run_open() {
 case $1 in
 	open) run_open ${1} ${2};;
 	init) init ${2:-v2};;
-	build) build ;;
+	build) build ${1} ${2:-plain};;
 	start|up) start ;;
 	stop|down) stop ;;
 	restart|reboot) restart ;;
 	status|ps) status ;;
 	logs) logs ${1} ${2:-all} ;;
-	ssh) dockerssh ${2:-php} ;;
+	ssh) dockerssh ${1} ${2:-php} ;;
 	*) helps ;;
 esac

@@ -4,7 +4,8 @@ FROM php:8.1.1-fpm
 LABEL lehungio <me@lehungio.com>
 
 # https://gist.github.com/lehungio/acc2bfc681349f678965a5d677168e88#file-dockerfile-L5
-SHELL ["/bin/bash", "-l", "-euxo", "pipefail", "-c"]
+# SHELL ["/bin/bash", "-l", "-euxo", "pipefail", "-c"]
+SHELL ["/bin/bash", "--login", "-c"]
 
 RUN apt-get update; \
     apt-get full-upgrade -y; \
@@ -22,6 +23,10 @@ RUN apt-get update && \
 # Replace shell with bash so we can source files
 # https://stackoverflow.com/questions/25899912/how-to-install-nvm-in-docker
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+# Set debconf to run non-interactively
+# debconf: delaying package configuration, since apt-utils is not installed
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 RUN pecl install redis \
     && pecl install xdebug \
@@ -79,7 +84,6 @@ RUN docker-php-ext-install exif
 
 # zip
 RUN apt-get install -y libzip-dev zip && docker-php-ext-install zip
-# TODO debconf: delaying package configuration, since apt-utils is not installed
 
 # imagick
 RUN pecl install imagick
@@ -90,6 +94,7 @@ RUN pecl install imagick
 # https://gist.github.com/remarkablemark/aacf14c29b3f01d6900d13137b21db3a
 # https://gist.github.com/remarkablemark/aacf14c29b3f01d6900d13137b21db3a#gistcomment-3067813
 ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION 16.13.2
 
 RUN mkdir -p "$NVM_DIR"; \
     curl -o- \
@@ -98,12 +103,6 @@ RUN mkdir -p "$NVM_DIR"; \
     ; \
     source $NVM_DIR/nvm.sh; \
     nvm install --lts --latest-npm
-
-# RUN command -v nvm; \
-#     command -v node; \
-#     node --version; \
-#     command -v npm; \
-#     npm --version
 
 # TODO This loads nvm
 # this command can not load properly when build, but  can run directly in ssh
@@ -117,12 +116,17 @@ RUN mkdir -p "$NVM_DIR"; \
 # RUN apt-get install -y nodejs npm
 RUN npm install yarn -g
 
-
 # mysql dependencies
 RUN apt-get update && apt-get install -y \
     vim \
     default-mysql-client \
     netcat
+
+# ENV
+# /usr/local/nvm/versions/node/v16.13.1/bin/node
+# /usr/local/nvm/versions/node/v16.13.1/lib/node_modules/
+ENV NODE_PATH $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 # Summary installation
 # 01. PHP
@@ -138,9 +142,6 @@ RUN pwd
 # CMD source ~/.bashrc
 # 02. NVM / Node / Yarn
 RUN nvm --version
-# RUN command -v nvm
-# RUN nvm ls-remote
-# RUN nvm list
 RUN node -v
 RUN npm -v
 RUN yarn -v
