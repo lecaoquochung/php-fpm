@@ -85,6 +85,10 @@ RUN docker-php-ext-install exif
 # zip
 RUN apt-get install -y libzip-dev zip && docker-php-ext-install zip
 
+# intl
+RUN docker-php-ext-install -j$(nproc) intl \
+    && docker-php-ext-enable intl
+
 # imagick
 RUN pecl install imagick
 
