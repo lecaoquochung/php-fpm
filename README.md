@@ -5,6 +5,7 @@ Docker image for [PHP-FPM](https://php-fpm.org/).
 
 ## Supported branches and respective Dockerfile links
  - [latest](https://github.com/lehungio/php-fpm/blob/master/Dockerfile)
+ - [8.1.1](https://github.com/lehungio/php-fpm/blob/8.1.1/Dockerfile)
  - [7.4](https://github.com/lehungio/php-fpm/7.4/Dockerfile)
  - [7.1](https://github.com/lehungio/php-fpm/blob/7.1/Dockerfile)
  - [5.6](https://github.com/lehungio/php-fpm/blob/5.6/Dockerfile)
