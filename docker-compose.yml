@@ -4,9 +4,9 @@ version: '3.7'
 services:
   php:
     restart: always
-    container_name: php-me
+    container_name: php-test-build
     hostname: php-me
-    image: lehungio/php-fpm:v1.0.5
+    image: lehungio/php-fpm:v8.1.1
     working_dir: /code
     volumes:
       - ./:/code
