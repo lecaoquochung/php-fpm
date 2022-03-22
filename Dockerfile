@@ -153,5 +153,9 @@ RUN yarn -v
 # 03. MYSQL CLIENT
 RUN mysql --version
 
+# 04. npm dependencies
+RUN npm install -g jest
+RUN jest -v
+
 # Disk usage
 RUN df -h
