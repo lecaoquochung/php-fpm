@@ -1,0 +1,28 @@
+{
+  "name": "php-fpm",
+  "version": "1.0.0",
+  "description": "Docker image for PHP-FPM",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lehungio/php-fpm.git"
+  },
+  "keywords": [
+    "docker",
+    "image",
+    "php",
+    "php-fpm"
+  ],
+  "author": "me@lehungio.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lehungio/php-fpm/issues"
+  },
+  "homepage": "https://github.com/lehungio/php-fpm#readme",
+  "dependencies": {
+    "jest": "^27.5.1"
+  }
+}
