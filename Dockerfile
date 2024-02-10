@@ -1,5 +1,5 @@
 # https://github.com/docker-library/php
-FROM php:8.1.1-fpm
+FROM php:8.3.2-fpm
 
 LABEL lehungio <me@lehungio.com>
 
