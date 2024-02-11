@@ -6,7 +6,7 @@ services:
     restart: always
     container_name: php-test-build
     hostname: php-me
-    image: lehungio/php-fpm:dev
+    image: lecaoquochung/php-fpm:8.3.2
     working_dir: /code
     volumes:
       - ./:/code

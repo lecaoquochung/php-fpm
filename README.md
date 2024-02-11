@@ -4,7 +4,13 @@ Docker image for [PHP-FPM](https://php-fpm.org/).
 [![Build Status](https://travis-ci.org/lehungio/php-fpm.svg?branch=master)](https://travis-ci.org/lehungio/php-fpm) [![Automated Build](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/lehungio/php-fpm/builds/)
 
 ## Supported branches and respective Dockerfile links
- - [latest](https://github.com/lehungio/php-fpm/blob/master/Dockerfile)
+Latest
+ - [latest](https://github.com/lecaoquochung/php-fpm/blob/master/Dockerfile)
+
+ LTS
+ - [8.3.2](https://github.com/lecaoquochung/php-fpm/blob/8.3.2/Dockerfile)
+
+ Maintenance
  - [8.1.1](https://github.com/lehungio/php-fpm/blob/8.1.1/Dockerfile)
  - [7.4](https://github.com/lehungio/php-fpm/7.4/Dockerfile)
  - [7.1](https://github.com/lehungio/php-fpm/blob/7.1/Dockerfile)
@@ -15,13 +21,13 @@ PHP-FPM (FastCGI Process Manager) is an alternative FastCGI implementation for P
 
 ## Getting image
 ```sh
-sudo docker pull lehungio/php-fpm
+sudo docker pull lecaoquochung/php-fpm
 ```
 
 ## Basic usage
 
 ```sh
-sudo docker run -v /path/to/your/app:/var/www/html -d lehungio/php-fpm
+sudo docker run -v /path/to/your/app:/var/www/html -d lecaoquochung/php-fpm
 ```
 
 ## Running your PHP script
@@ -30,7 +36,7 @@ sudo docker run -v /path/to/your/app:/var/www/html -d lehungio/php-fpm
 Run the PHP-FPM image, mounting a directory from your host.
 
 ```sh
-sudo docker run -it --name phpfpm -v /path/to/your/app:/var/www/html lehungio/php-fpm php index.php
+sudo docker run -it --name phpfpm -v /path/to/your/app:/var/www/html lecaoquochung/php-fpm php index.php
 ```
 
 or using [Docker Compose](https://docs.docker.com/compose/):
@@ -38,7 +44,7 @@ or using [Docker Compose](https://docs.docker.com/compose/):
 ### Running as server
 
 ```sh
-sudo docker run --rm --name phpfpm -v /path/to/your/app:/var/www/html -p 8000:8000 lehungio/php php-fpm -S="0.0.0.0:8000" -t="/var/www/html"
+sudo docker run --rm --name phpfpm -v /path/to/your/app:/var/www/html -p 38086:38086 lecaoquochung/php php-fpm -S="0.0.0.0:38086" -t="/var/www/html"
 ```
 
 ### Logging
