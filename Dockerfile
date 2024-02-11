@@ -1,5 +1,5 @@
 # https://github.com/docker-library/php
-FROM php:8.1.1-fpm
+FROM php:8.3.2-fpm
 
 LABEL lehungio <me@lehungio.com>
 
@@ -51,12 +51,12 @@ RUN apt-get update && apt-get install -y \
     zip \
     git
 
+RUN apt-get update
 RUN apt-get install -y -q --no-install-recommends \
     apt-transport-https \
     build-essential \
     ca-certificates \
     curl \
-    python \
     rsync \
     software-properties-common \
     devscripts \
@@ -64,6 +64,15 @@ RUN apt-get install -y -q --no-install-recommends \
     ssl-cert \
     && apt-get clean
 
+# Check for broken packages
+RUN apt-get install -f
+
+# Upgrade system packages
+RUN apt-get upgrade -y
+RUN apt-get dist-upgrade -y
+
+# Install python3.11
+RUN apt-get install -y python3.11
 
 # Deprecated mbstring, mcrypt, zip
 RUN docker-php-ext-install bz2
@@ -90,7 +99,19 @@ RUN docker-php-ext-install -j$(nproc) intl \
     && docker-php-ext-enable intl
 
 # imagick
-RUN pecl install imagick
+RUN apt-get update && apt-get upgrade -y
+# Replace the lines containing TSRMLS_SET_CTX in imagick_class.c with comments
+RUN apt-get update \
+    && apt-get install -y libmagickwand-dev \
+    && curl -L -o /tmp/imagick.tar.gz https://pecl.php.net/get/imagick-3.5.1.tgz \
+    && tar xvzf /tmp/imagick.tar.gz -C /tmp \
+    && cd /tmp/imagick-3.5.1 \
+    && phpize \
+    && ./configure --with-imagick=shared \
+    && make \
+    && make install \
+    && docker-php-ext-enable imagick \
+    && rm -rf /tmp/imagick.tar.gz /tmp/imagick-3.5.1
 
 # Node dependencies
 # https://github.com/nodejs/Release
@@ -98,7 +119,7 @@ RUN pecl install imagick
 # https://gist.github.com/remarkablemark/aacf14c29b3f01d6900d13137b21db3a
 # https://gist.github.com/remarkablemark/aacf14c29b3f01d6900d13137b21db3a#gistcomment-3067813
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 16.13.2
+ENV NODE_VERSION latest
 
 RUN mkdir -p "$NVM_DIR"; \
     curl -o- \
@@ -124,7 +145,7 @@ RUN npm install yarn -g
 RUN apt-get update && apt-get install -y \
     vim \
     default-mysql-client \
-    netcat
+    netcat-openbsd
 
 # ENV
 # /usr/local/nvm/versions/node/v16.13.1/bin/node
@@ -155,7 +176,7 @@ RUN mysql --version
 
 # 04. npm dependencies
 RUN npm install -g jest
-RUN jest -v
+RUN jest --version
 
 # Disk usage
 RUN df -h
