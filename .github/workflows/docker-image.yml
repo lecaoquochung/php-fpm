@@ -2,30 +2,15 @@ name: Docker Image CI
 
 on:
   push:
-    branches:
-      - master
-      - dev
-      - 8*
+    branches: ["master", "dev"]
   pull_request:
-    branches:
-      - master
-      - dev
-      - 8*
+    branches: ["master", "dev"]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-
-    runs-on: php:8.3.2-fpm
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
