@@ -51,12 +51,12 @@ RUN apt-get update && apt-get install -y \
     zip \
     git
 
+RUN apt-get update
 RUN apt-get install -y -q --no-install-recommends \
     apt-transport-https \
     build-essential \
     ca-certificates \
     curl \
-    python \
     rsync \
     software-properties-common \
     devscripts \
@@ -64,6 +64,15 @@ RUN apt-get install -y -q --no-install-recommends \
     ssl-cert \
     && apt-get clean
 
+# Check for broken packages
+RUN apt-get install -f
+
+# Upgrade system packages
+RUN apt-get upgrade -y
+RUN apt-get dist-upgrade -y
+
+# Install python3.11
+RUN apt-get install -y python3.11
 
 # Deprecated mbstring, mcrypt, zip
 RUN docker-php-ext-install bz2
